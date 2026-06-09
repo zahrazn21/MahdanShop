@@ -5,13 +5,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { CheckCircle } from "lucide-react";
-import TabsSection from "./healpers/tabSection";
+import TabsSection from "./helpers/tabSection";
 import { Product } from "./ProductItems";
-import { ProductInfoSection } from "./healpers/ProductInfoSection";
-import { ProductSkeleton } from "./healpers/ProductSkeleton";
-import { Breadcrumb } from "./healpers/Breadcrumb";
-import ProductGallery from "./healpers/ProductGallery";
-import { ServiceCard } from "./healpers/ServiceCard";
+import { ProductInfoSection } from "./helpers/ProductInfoSection";
+import { ProductSkeleton } from "./helpers/ProductSkeleton";
+import { Breadcrumb } from "./helpers/Breadcrumb";
+import ProductGallery from "./helpers/ProductGallery";
+import { ServiceCard } from "./helpers/ServiceCard";
 import { Gift, Truck, ShieldCheck, RefreshCw } from "lucide-react";
 import { useCartActions } from "@/src/shared/hooks/useCart";
 interface Props {

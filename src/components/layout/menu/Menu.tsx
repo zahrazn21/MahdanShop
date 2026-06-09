@@ -406,22 +406,18 @@ function MobileMenu({
 
   return (
     <>
-      {/* اوورلی */}
       <div
         className="fixed inset-0 bg-black/50 z-40 lg:hidden"
         onClick={onClose}
       />
 
-      {/* منو اسلایدر */}
       <div className="fixed top-0 right-0 bottom-0 w-70 bg-white shadow-2xl z-50 flex flex-col lg:hidden">
-        {/* هدر */}
         <div className="flex justify-end items-center p-4 ">
           {/* <span className="font-bold text-pink-600">منو</span> */}
           <button onClick={onClose} className="p-1 rounded-lg hover:bg-pink-50">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
-        {/* لوگو */}
 
         <div className="gap-5 place-content-center justify-center justify-items-center items-center grid">
           <Image
@@ -433,7 +429,6 @@ function MobileMenu({
           />
           <p className="text-[14px]">❤️ به مهدان شاپ خوش آمدید</p>
         </div>
-        {/* دکمه عضویت و ورود */}
         <div className=" my-5 gap-3 place-content-center justify-center justify-items-center items-center grid">
           <button className="flex items-center text-[14px] justify-end gap-5 bg-linear-to-t to-60% to-pink-300 via-10%  via-pink-400 bg-pink-500 w-60 h-10 p-2 rounded-xl text-white">
             <p>ورود به حساب کاربری</p>
@@ -445,10 +440,8 @@ function MobileMenu({
           </button>{" "}
         </div>
 
-        {/* محتوا */}
         <div dir="rtl" className="flex-1 overflow-y-auto p-2">
           {activeCategory === null ? (
-            // صفحه اصلی منو
             <div className="space-y-1">
               {menuItems.map((item) => (
                 <div key={item.name}>
@@ -479,9 +472,7 @@ function MobileMenu({
               ))}
             </div>
           ) : (
-            // صفحه دسته‌بندی
             <div>
-              {/* دکمه برگشت */}
               <button
                 onClick={onBack}
                 className="flex items-center gap-2 px-3 py-2 text-sm text-gray-500 hover:text-pink-600 mb-2"
@@ -490,7 +481,6 @@ function MobileMenu({
                 بازگشت
               </button>
 
-              {/* تب‌های وارداتی/داخلی */}
               <div className="flex gap-2 p-2 bg-gray-100 rounded-xl mb-3">
                 {menuItems
                   .find((item) => item.type === "category")
@@ -509,7 +499,6 @@ function MobileMenu({
                   ))}
               </div>
 
-              {/* زیرمجموعه‌ها */}
               <div className="space-y-1">
                 {activeCategory.subCategories.map((sub) => (
                   <Link

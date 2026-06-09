@@ -55,7 +55,7 @@ export default function Navbar() {
             <Handbag className="w-7 h-7 hover:text-pink-500" />
           </Link>
           <div className="border-r-2 border-r-[#f8e3ef] h-9 w-0"></div>
-          <Link href={"/faiverite"}>
+          <Link href={"/favorites"}>
             <Heart className="w-7 h-7 hover:text-pink-500" />
           </Link>
           <div className="border-r-2 border-r-[#f8e3ef] h-9 w-0"></div>
