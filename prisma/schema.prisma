@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  
+  carts     Cart[]   // رابطه با سبد خرید
+}
+
+model Product {
+  id            String      @id @default(cuid())
+  name          String
+  slug          String      @unique
+  price         Int
+  originalPrice Int?
+  image         String
+  images        String[]     // آرایه آدرس تصاویر (می‌تواند خالی باشد)
+  category      String
+  brand         String?
+  scope         String       // "imported" یا "domestic"
+  stock         Int          @default(0)
+  colors        String[]     // آرایه رنگ‌ها (می‌تواند خالی باشد)
+  sizes         String[]     // آرایه سایزها (می‌تواند خالی باشد)
+  numbers       String[]     // آرایه اعداد (می‌تواند خالی باشد)
+  isAvailable   Boolean      @default(true)
+  rating        Float?       @default(0)
+  reviewCount   Int          @default(0)
+  description   String?      @db.Text
+  features      String[]     // ویژگی‌های محصول (می‌تواند خالی باشد)
+  howToUse      String?      @db.Text
+  ingredients   String[]     // مواد تشکیل‌دهنده (می‌تواند خالی باشد)
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt
+  cartItems     CartItem[]   // 👈 اضافه شد: رابطه با آیتم‌های سبد خرید
+
+  @@index([category])
+  @@index([brand])
+  @@index([scope])
+  @@index([isAvailable])
+  @@index([slug])
+  @@map("products")
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String?    // null = مهمان
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime @default(now()) @updatedAt  
+  user      User?      @relation(fields: [userId], references: [id]) // 👈 اضافه شد
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int      @default(1)
+
+  selectedColor  String?
+  selectedSize   String?
+  selectedNumber String?
+
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id]) // 👈 اضافه شد: رابطه با Product
+
+  @@unique([cartId, productId, selectedColor, selectedSize, selectedNumber]) // 👈 جلوگیری از آیتم تکراری
+}

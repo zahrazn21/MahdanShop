@@ -1,0 +1,365 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --color-pink: #fc5e8f;
+  --color-pink-dark: #e54c7a;
+  --color-pink-light: #fdf6fb;
+  --color-pink-font: #d94a84;
+  --color-pink-white: #f3d4e9;
+  --color-pink-bg: #fef4fc;
+  --color-pink-card: #fceef8;
+  --color-pink-footer:#fdecf2;
+  --color-pink-bg-white:#fefdfe;
+  
+  --swiper-navigation-size: 24px;
+
+  --swiper-navigation-color: #d94a84;
+
+  --swiper-navigation-hover-color: #eaa1be;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* --- Baloo Bhajjaan 2 --- */
+@font-face {
+  font-family: "BalooBhajjaan2";
+  src: url("/fonts/BalooBhajjaan2-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "BalooBhajjaan2";
+  src: url("/fonts/BalooBhajjaan2-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* --- Noto Naskh Arabic --- */
+@font-face {
+  font-family: "NotoNaskhArabic";
+  src: url("/fonts/NotoNashkArabic-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "NotoNaskhArabic";
+  src: url("/fonts/NotoNashkArabic-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* --- Playpen Sans Arabic --- */
+@font-face {
+  font-family: "PlaypenSansArabic";
+  src: url("/fonts/PlaypenSansArabic-Thin.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PlaypenSansArabic";
+  src: url("/fonts/PlaypenSansArabic-ExtraLight.ttf") format("truetype");
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PlaypenSansArabic";
+  src: url("/fonts/PlaypenSansArabic-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PlaypenSansArabic";
+  src: url("/fonts/PlaypenSansArabic-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PlaypenSansArabic";
+  src: url("/fonts/PlaypenSansArabic-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PlaypenSansArabic";
+  src: url("/fonts/PlaypenSansArabic-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PlaypenSansArabic";
+  src: url("/fonts/PlaypenSansArabic-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PlaypenSansArabic";
+  src: url("/fonts/PlaypenSansArabic-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  font-family:
+    "PlaypenSansArabic", "BalooBhajjaan2", "NotoNaskhArabic", sans-serif;
+}
+
+p,
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span {
+  font-family:
+    "PlaypenSansArabic", "BalooBhajjaan2", "NotoNaskhArabic", sans-serif;
+}
+
+/* body {
+  background-image: url("/images/bgnew2-1.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+} */
+
+body {
+  background-image: url("/images/test4.png");
+  background-repeat: repeat-y; 
+  background-size: 100% auto;
+}
+/* globals.css */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+/* globals.css */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.animate-shine {
+  animation: shine 2.5s infinite;
+}
+/* globals.css */
+@keyframes shine-diagonal {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+.animate-shine-diagonal {
+  animation: shine-diagonal 2.5s infinite;
+}
+/* 
+@media (min-width: 412px) and (max-width: 915px) {
+  body {
+    background-image: url("/images/bg_53.png") !important;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+} */
+
+/* @media (max-width: 480px) {
+  body{
+    background-image: none !important;
+
+    background-color: white !important;
+  }
+}
+
+@media (min-width: 412px) and (max-width: 915px) {
+  body{
+    background-image: none !important;
+
+    background-color: white !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  body{
+    background-image: none !important;
+
+    background-color: white !important;
+  }
+} */
+
+/* .swiper-button-prev svg,
+.swiper-button-next svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  padding: 12px;
+}
+
+.swiper-button-prev {
+  left: 0px;
+  right: auto;
+  background: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.swiper-button-next {
+  right: 100px;
+  left: auto;
+  background: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+} */
+
+.swiper .swiper-wrapper .swiper-slide {
+  margin: 0 5px !important;
+}
+.swiper .swiper-wrapper {
+  margin: 0 40px !important;
+}
+
+/* globals.css - اضافه کن */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shrink {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.animate-in {
+  animation-duration: 200ms;
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.zoom-in {
+  animation-name: zoomIn;
+}
+
+.slide-in-from-top-5 {
+  animation-name: slideInFromTop;
+}
+
+.animate-shrink {
+  animation-name: shrink;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.swiper .swiper-wrapper {
+  margin: 0 !important;
+}
+
+
+/* globals.css */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 1s ease-out;
+}
