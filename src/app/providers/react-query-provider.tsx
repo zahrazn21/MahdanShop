@@ -1,4 +1,3 @@
-// app/providers/QueryProvider.tsx
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -10,13 +9,13 @@ export default function QueryProvider({ children }: { children: React.ReactNode 
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 10 * 60 * 1000, // 10 دقیقه (قبلاً 1 دقیقه بود)
-            gcTime: 30 * 60 * 1000, // 30 دقیقه (قبلاً 10 دقیقه بود)
-            retry: 2, // 2 بار تلاش مجدد
-            retryDelay: 1000, // 1 ثانیه بین تلاش‌ها
-            refetchOnWindowFocus: false, // عدم رفرش با فوکوس پنجره
-            refetchOnMount: false, // عدم رفرش با mount مجدد
-            refetchOnReconnect: false, // عدم رفرش با reconnect
+            staleTime: 10 * 60 * 1000,
+            gcTime: 30 * 60 * 1000, 
+            retry: 2, 
+            retryDelay: 1000, 
+            refetchOnWindowFocus: false, 
+            refetchOnMount: false, 
+            refetchOnReconnect: false, 
           },
         },
       })

@@ -4,6 +4,8 @@ import Footer from "../components/layout/Footer";
 import "./globals.css";
 import ReactQueryProvider from "./providers/react-query-provider";
 import BottomNav from "../components/navigation/BottomNav";
+import { ToastProvider } from "../shared/contexts/ToastContext";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -11,16 +13,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fa"  suppressHydrationWarning>
-      <body className="mx-0 md:max-w-300 md:mx-auto md:px-8 ">
-        <ReactQueryProvider>
-          {" "}
-          <Navbar />
-          <Header />
-          {children}
-          <Footer />
-          <BottomNav></BottomNav>
-        </ReactQueryProvider>
+    <html lang="fa" suppressHydrationWarning>
+      <body>
+        <div className="flex justify-between bg-pink-900 px-6 py-1.5 text-xs text-white">
+          <span>تخفیف‌های ویژه | اصالت کالا | پشتیبانی ۲۴ ساعته</span>
+          <span>ارسال رایگان برای سفارش‌های بالای ۸۰۰ هزار تومان</span>
+        </div>
+        <div className="md:mx-auto max-w-6xl space-y-14 px-4 py-4">
+          <ToastProvider>
+            <ReactQueryProvider>
+              {" "}
+              <Navbar />
+              <Header />
+              {children}
+              <Footer />
+            </ReactQueryProvider>
+          </ToastProvider>
+          <Toaster position="top-center" richColors />
+        </div>
+        <BottomNav />
       </body>
     </html>
   );

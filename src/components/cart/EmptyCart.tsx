@@ -1,4 +1,3 @@
-// components/cart/EmptyCart.tsx
 'use client';
 
 import Link from 'next/link';

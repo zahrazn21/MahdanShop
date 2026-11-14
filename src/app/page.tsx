@@ -1,9 +1,7 @@
 import Image from "next/image";
-import Navbar from "../components/layout/Navbar";
 import Banner from "../components/home/Banner";
 import CategorySlider from "../components/categories/CategorySlider";
 import ProductSlider from "../components/product/ProductSlider";
-import FilterProduct from "../components/product/FilterProduct";
 import {
   Truck,
   ShieldCheck,
@@ -13,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import FAQ from "../components/layout/FAQ";
+import { Metadata } from "next";
 
 export interface ServiceItem {
   id: number;
@@ -47,13 +46,17 @@ export const servicesData: ServiceItem[] = [
     subtitle: "ضمانت بازگشت",
   },
 ];
-
+export const metadata: Metadata = {
+  title: "Mahdan Shop | مهدان شاپ",
+  description: "بهترین محصولات آرایشی و مراقبتی، اصل و با ارسال سریع",
+};
 export default function Home() {
   return (
     <div className="">
       <Banner></Banner>
+      <div className="">
 
-      <div className=" md:my-6 md:rounded-3xl md:backdrop-blur-sm md:border-2 md:bg-[#fffafd] md:border-pink-100 md:py-3">
+      <div className=" md:my-6 md:rounded-3xl md:back drop-blur-sm md:border-2 md:bg-[#fffafd] md:border-pink-100 md:py-3">
         <h2
           dir="rtl"
           className="flex items-center md:mx-4 md:text-xl text-[15px] sm:text-2xl font-bold"
@@ -67,7 +70,7 @@ export default function Home() {
           />
           دسته‌بندی محصولات
         </h2>
-        <CategorySlider scope="domestic"></CategorySlider>
+        <CategorySlider />
       </div>
       <div className="space-y-6 md:my-4 md:rounded-3xl md:backdrop-blur-sm md:border-2 md:bg-[#fffafd] md:border-pink-100 md:py-6">
         <div className="">
@@ -93,7 +96,7 @@ export default function Home() {
               <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
             </Link>
           </div>
-          <FilterProduct></FilterProduct>
+          <ProductSlider scope="all" />
         </div>
 
         <div
@@ -115,32 +118,13 @@ export default function Home() {
         </div>
 
         <div>
-          <div
-            dir="rtl"
-            className="flex items-center justify-between md:mx-4 mx-4 md:text-xl text-[15px] sm:text-2xl font-bold "
-          >
-            <div className="flex items-center">
-              <Image
-                src="/images/love.png"
-                alt="test"
-                width={60}
-                height={60}
-                className="w-10  h-auto rotate-6"
-              />
-              پرفروش ترین ها
-            </div>
-            <Link
-              href="/products"
-              className="flex items-center text-(--color-pink-dark) text-[11px] sm:test-xl md:text-base"
-            >
-              <p>مشاهده همه</p>
-              <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
-            </Link>
-          </div>
-          <ProductSlider scope="all"></ProductSlider>
+         
+          <ProductSlider title="پرفروش‌ترین‌ها" sortBy="best-selling" />
+          <ProductSlider title="جدیدترین محصولات" sortBy="newest" />
+          <ProductSlider title="ارزان‌ترین محصولات" sortBy="price-low" />
+          {/* <ProductSlider title="محصولات وارداتی" scope="imported" /> */}
         </div>
 
-        {/* خدمات */}
         <div className="md:mx-8 md:h-24  bg-(--color-pink-footer) border border-white sm:rounded-4xl md:rounded-3xl grid place-content-center place-items-center grid-cols-4 sm:grid-cols-4 cd:gap-4 sm:gap-0 ">
           {servicesData.map((service) => (
             <div
@@ -179,13 +163,7 @@ export default function Home() {
           <FAQ></FAQ>
         </div>
       </div>
-
-      {/* <div>
-        <ProductSlider scope="all"></ProductSlider>
       </div>
-      <div>
-        <ProductSlider scope="all"></ProductSlider>
-      </div> */}
     </div>
   );
 }

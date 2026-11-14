@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "order_batches" ADD COLUMN     "closedAt" TIMESTAMP(3),
+ADD COLUMN     "openedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

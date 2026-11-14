@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import  {  useState } from "react";
 import ProductSlider from "./ProductSlider";
  
 type ButtonType = {

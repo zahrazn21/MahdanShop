@@ -62,20 +62,19 @@ export default function Toast({
     <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top-5 fade-in duration-300">
       <div className={`${current.bg} text-white rounded-xl shadow-lg overflow-hidden min-w-[300px] max-w-md`}>
         <div className="flex items-center gap-3 p-4">
-          <div className="flex-shrink-0">{current.icon}</div>
+          <div className="shrink-0">{current.icon}</div>
           <div className="flex-1">
             <h4 className="font-bold text-sm">{current.title}</h4>
             <p className="text-sm opacity-90">{message}</p>
           </div>
           <button
             onClick={onClose}
-            className="flex-shrink-0 text-white/80 hover:text-white transition-colors"
+            className="shrink-0 text-white/80 hover:text-white transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
         
-        {/* نوار پیشرفت */}
         <div className="h-1 bg-white/30 relative">
           <div
             className="absolute inset-0 bg-white/50 animate-shrink"

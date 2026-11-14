@@ -1,4 +1,3 @@
-// components/ui/EmptyState.tsx
 import Link from "next/link";
 
 interface EmptyStateProps {

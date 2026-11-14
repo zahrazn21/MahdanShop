@@ -2,9 +2,6 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-/* ----------------------------------------- */
-/*            افزودن محصول (POST)            */
-/* ----------------------------------------- */
 export const useAddProduct = () => {
   const queryClient = useQueryClient();
 
@@ -17,7 +14,10 @@ export const useAddProduct = () => {
         body: JSON.stringify(data),
       });
 
-      if (!res.ok) throw new Error("خطا در افزودن محصول");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        throw new Error(errorData?.error || errorData?.message || "خطا در افزودن محصول");
+      }
 
       return res.json();
     },
@@ -27,10 +27,6 @@ export const useAddProduct = () => {
     },
   });
 };
-
-/* ----------------------------------------- */
-/*             ویرایش محصول (PUT)            */
-/* ----------------------------------------- */
 export const useEditProduct = () => {
   const queryClient = useQueryClient();
 
@@ -43,7 +39,10 @@ export const useEditProduct = () => {
         body: JSON.stringify(data),
       });
 
-      if (!res.ok) throw new Error("خطا در ویرایش محصول");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        throw new Error(errorData?.error || errorData?.message || "خطا در ویرایش محصول");
+      }
 
       return res.json();
     },
@@ -54,9 +53,6 @@ export const useEditProduct = () => {
   });
 };
 
-/* ----------------------------------------- */
-/*             حذف محصول (DELETE)            */
-/* ----------------------------------------- */
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
 
@@ -66,7 +62,10 @@ export const useDeleteProduct = () => {
         method: "DELETE",
       });
 
-      if (!res.ok) throw new Error("خطا در حذف محصول");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        throw new Error(errorData?.error || errorData?.message || "خطا در حذف محصول");
+      }
 
       return res.json();
     },

@@ -1,5 +1,6 @@
+import { Product } from "@/src/shared/types/product";
 import Link from "next/link";
-import { getCategoryName, Product } from "../ProductItems";
+import { getCategoryName } from "../../categories/CategoryItems";
 
 export function Breadcrumb({ product }: { product: Product }) {
   return (

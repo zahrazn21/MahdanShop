@@ -7,9 +7,7 @@ export default function ProductsLayout({
 
 }: ProductsLayoutProps) {
   return (
-    <div className="container mx-auto px-4 py-8">
-     
-
+    <div className="container md:mx-auto md:px-4 px-2 md:py-8 py-2">
       <div>
         {children}
       </div>

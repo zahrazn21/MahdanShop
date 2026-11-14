@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// app/products/@featured/page.tsx
 "use client";
 
 import ProductCard from "@/src/components/product/ProductCard";
+import { Product } from "@/src/shared/types/product";
 import { useQuery } from "@tanstack/react-query";
 import { Sparkles, TrendingUp, Clock } from "lucide-react";
 
@@ -20,7 +19,7 @@ export default function FeaturedProducts() {
 
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl p-6">
+      <div className="bg-linear-to-r from-pink-50 to-rose-50 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-4">
           <Sparkles className="w-5 h-5 text-pink-500" />
           <h2 className="text-lg font-bold text-gray-800">محصولات ویژه</h2>
@@ -56,7 +55,7 @@ export default function FeaturedProducts() {
       </div>
       
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
-        {products.map((product: any) => (
+        {products.map((product:Product ) => (
           <ProductCard key={product.id} productItems={product} />
         ))}
       </div>

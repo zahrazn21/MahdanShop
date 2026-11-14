@@ -1,86 +1,125 @@
 "use client";
 
-import ProductCard from "./ProductCard";
-import { useSearchParams } from "next/navigation";
-import { Product } from "./ProductItems";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useProducts } from "@/src/shared/hooks/useProducts";
+import { Product } from "@/src/shared/types/product";
+import { getCategoryName } from "../categories/CategoryItems";
+import ProductCard from "./ProductCard";
+import ProductsEmpty from "./ProductsEmpty";
+import ProductsPagination from "./ProductsPagination";
+import ProductsGridSkeleton from "../../shared/ui/ProductsGridSkeleton";
+
+type Scope = "domestic" | "imported" | "all";
 
 type Props = {
-  scope: "domestic" | "imported" | "all";
+  scope: Scope;
   category?: string;
+  categoryName?: string;
 };
 
+const scopeTitles: Record<Scope, string> = {
+  all: "همه محصولات",
+  imported: "محصولات وارداتی",
+  domestic: "محصولات داخلی",
+};
 
-export default function AllProducts({ scope, category }: Props) {
+const gridClass =
+  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-6";
 
+const toPositiveInt = (value: string | null, fallback: number) => {
+  const n = Number(value ?? fallback);
+  return Number.isInteger(n) && n > 0 ? n : fallback;
+};
+
+export default function AllProducts({ scope, category, categoryName }: Props) {
   const searchParams = useSearchParams();
-  const currentScope = searchParams.get("scope") || scope || "all";
-  const currentSortBy = searchParams.get("sortBy") || "newest";
-  const minPrice = searchParams.get("minPrice") || "";
-  const maxPrice = searchParams.get("maxPrice") || "";
-  const inStock = searchParams.get("inStock") === "true";
-  const onSale = searchParams.get("onSale") === "true";
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const { data, isLoading , error } = useProducts({scope:currentScope,sortBy:currentSortBy,minPrice,maxPrice,inStock,onSale});
- 
-  
+  const currentScope = (searchParams.get("scope") || scope || "all") as Scope;
+  const currentCategory =
+    category?.trim() || searchParams.get("category")?.trim() || "";
+  const search = searchParams.get("search")?.trim() || "";
+  const currentPage = toPositiveInt(searchParams.get("page"), 1);
+  const limit = toPositiveInt(searchParams.get("limit"), 30);
+
+  const { data, isLoading, error } = useProducts({
+    scope: currentScope,
+    category: currentCategory,
+    sortBy: searchParams.get("sortBy") || "newest",
+    minPrice: searchParams.get("minPrice") || "",
+    maxPrice: searchParams.get("maxPrice") || "",
+    inStock: searchParams.get("inStock") === "true",
+    onSale: searchParams.get("onSale") === "true",
+    search,
+    page: currentPage,
+    limit,
+  });
+
+  const products: Product[] = data?.products ?? [];
+  const pagination = data?.pagination;
+
+  const changePage = (page: number) => {
+    if (!pagination || page < 1 || page > pagination.totalPages) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(page));
+    router.push(`${pathname}?${params.toString()}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const title = search
+    ? `نتایج جستجو برای «${search}»`
+    : categoryName ||
+      (currentCategory
+        ? getCategoryName(currentCategory)
+        : (scopeTitles[currentScope] ?? scopeTitles.all));
+
   return (
     <div dir="rtl" className="space-y-6">
-
-      <div className="flex flex-wrap justify-between items-center gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-bold">محصولات</h2>
-          <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-            {isLoading ? "در حال بارگذاری..." : `${data.length} عدد`}
+          <h2 className="text-2xl font-bold">{title}</h2>
+
+          <span className="rounded-full bg-gray-100 px-2 py-1 text-sm text-gray-500">
+            {isLoading
+              ? "در حال بارگذاری..."
+              : `${(pagination?.totalProducts ?? 0).toLocaleString("fa-IR")} عدد`}
           </span>
         </div>
+
+        {pagination && pagination.totalPages > 0 && (
+          <span className="text-sm text-gray-400">
+            صفحه {pagination.currentPage.toLocaleString("fa-IR")} از{" "}
+            {pagination.totalPages.toLocaleString("fa-IR")}
+          </span>
+        )}
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="h-48 bg-gray-100 animate-pulse rounded-xl" />
-          ))}
-        </div>
+        <ProductsGridSkeleton className={gridClass} />
       ) : error ? (
-        <div className="text-center py-10 text-red-600 bg-red-50 rounded-xl">
-          {error.message}
+        <div className="rounded-xl bg-red-50 py-10 text-center text-red-600">
+          {error instanceof Error ? error.message : "خطا در دریافت محصولات"}
         </div>
-      ) : data.length === 0 ? (
-        <EmptyState scope={scope} category={category} />
+      ) : products.length === 0 ? (
+        <ProductsEmpty scope={currentScope} category={currentCategory} />
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-          {data.map((product:Product) => (
-            <ProductCard key={product.id} productItems={product} />
-          ))}
-        </div>
+        <>
+          <div className={gridClass}>
+            {products.map((product) => (
+              <ProductCard key={product.id} productItems={product} />
+            ))}
+          </div>
+
+          {pagination && (
+            <ProductsPagination
+              pagination={pagination}
+              onPageChange={changePage}
+            />
+          )}
+        </>
       )}
     </div>
   );
-}
-
-function EmptyState({ scope, category }: { scope: Props["scope"]; category?: string }) {
-  return (
-    <div className="text-center py-16 bg-linear-to-br from-pink-50 to-rose-50 rounded-2xl">
-      <div className="text-6xl mb-4">🛍️</div>
-      <p className="text-gray-500 font-medium">محصولی یافت نشد</p>
-      <p className="text-sm text-gray-400 mt-1">
-        {scope === "domestic"
-          ? "محصولات داخلی"
-          : scope === "imported"
-          ? "محصولات وارداتی"
-          : "همه محصولات"}
-        {category && ` در دسته ${getCategoryName(category)}`} موجود نیست
-      </p>
-    </div>
-  );
-}
-
-function getCategoryName(slug: string): string {
-  const categories: Record<string, string> = {
-    cosmetics: "لوازم آرایشی",
-    stationery: "لوازم تحریر",
-    "cute-items": "آیتم‌های فانتزی",
-  };
-  return categories[slug] || slug;
 }

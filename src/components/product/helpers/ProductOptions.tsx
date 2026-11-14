@@ -1,13 +1,10 @@
-// components/product/ProductOptions.tsx
 "use client";
-
-import { useState } from "react";
 import { Check } from "lucide-react";
 
 interface ProductOptionsProps {
   colors?: string[];
   sizes?: string[];
-  numbers?: string[]; // برای شماره محصولات آرایشی (رژ لب، کرم پودر و...)
+  numbers?: string[];
   selectedColor?: string;
   selectedSize?: string;
   selectedNumber?: string;
@@ -29,7 +26,6 @@ export default function ProductOptions({
 }: ProductOptionsProps) {
   return (
     <div className="space-y-4">
-      {/* انتخاب رنگ */}
       {colors.length > 0 && (
         <div>
           <label className="block text-gray-700 font-semibold mb-2">
@@ -62,8 +58,6 @@ export default function ProductOptions({
           </div>
         </div>
       )}
-
-      {/* انتخاب سایز */}
       {sizes.length > 0 && (
         <div>
           <label className="block text-gray-700 font-semibold mb-2">
@@ -89,8 +83,6 @@ export default function ProductOptions({
           </div>
         </div>
       )}
-
-      {/* انتخاب شماره (برای لوازم آرایشی) */}
       {numbers.length > 0 && (
         <div>
           <label className="block text-gray-700 font-semibold mb-2">
@@ -121,8 +113,6 @@ export default function ProductOptions({
     </div>
   );
 }
-
-// تابع کمکی برای تبدیل نام رنگ به کد رنگ
 function getColorCode(colorName: string): string {
   const colors: Record<string, string> = {
     قرمز: "#DC2626",

@@ -1,4 +1,3 @@
-// app/products/[id]/error.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -17,7 +16,7 @@ export default function ProductDetailError({
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-pink-50 via-rose-50 to-purple-50 flex items-center justify-center p-4">
       <div className="max-w-md text-center">
         <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <AlertCircle className="w-12 h-12 text-red-500" />

@@ -1,11 +1,8 @@
-// app/about/page.tsx
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { Heart, Gift, Sparkles, Target, Award, Shield } from "lucide-react";
+import { Target } from "lucide-react";
 
-// components/about/FeaturesBoxes.ts
 export interface FeatureBox {
   id: number;
   image: string;
@@ -16,25 +13,25 @@ export interface FeatureBox {
 export const featureBoxes: FeatureBox[] = [
   {
     id: 1,
-    image: "/images/icons/gift.png", 
+    image: "/images/icons/gift.png",
     title: "محصولات خاص و فانتزی",
     description: "انتخابی از بهترین و خاص‌ترین محصولات برای شما",
   },
   {
     id: 2,
-    image: "/images/icons/bag.png", 
+    image: "/images/icons/bag.png",
     title: "کیفیت بالا",
     description: "ما به کیفیت محصولات خود اهمیت زیادی می‌دهیم",
   },
   {
     id: 3,
-    image: "/images/icons/satisfaction.png", 
+    image: "/images/icons/satisfaction.png",
     title: "رضایت شما",
     description: "رضایت و لبخند شما، اولویت اصلی ماست",
   },
   {
     id: 4,
-    image: "/images/icons/car.png", // مسیر عکس ارسال سریع
+    image: "/images/icons/car.png",
     title: "ارسال سریع و مطمئن",
     description: "سفارش‌های شما در سریع‌ترین زمان ممکن ارسال می‌شود",
   },
@@ -50,18 +47,17 @@ export default function AboutPage() {
       className="min-h-screen relative overflow-hidden rounded-4xl border border-[#fdf5f9] shadow shadow-amber-50"
     >
       <section className="relative overflow-hidden ">
-        {/* تصویر پس‌زمینه */}
         <div className="absolute inset-0 z-0">
           <Image
+            width={1800}
+            height={600}
             src="/images/bannerAbout.png"
             alt="درباره ما"
-            fill
+            
             className="object-cover brightness-50"
             priority
           />
         </div>
-
-        {/* محتوای روی تصویر */}
         <div className="relative z-10 container mx-auto px-4 py-24 md:py-32 text-center text-white">
           <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-in">
             داستان ما
@@ -71,11 +67,8 @@ export default function AboutPage() {
           </p>
         </div>
       </section>
-
-      {/* بخش معرفی */}
       <section className="container mx-auto px-4 py-16">
         <div className="flex flex-col lg:flex-row gap-12 items-center px-10">
-          {/* تصویر */}
           <div className="lg:w-full">
             <div className="relative overflow-hidden ">
               <Image
@@ -85,11 +78,8 @@ export default function AboutPage() {
                 height={700}
                 className="object-cover w-full h-auto"
               />
-              {/* <div className="absolute inset-0 bg-linear-to-t from-pink-500/20 to-transparent" /> */}
             </div>
           </div>
-
-          {/* متن */}
           <div className="lg:w-2/3 text-center lg:text-right  justify-items-center grid gap-6 text-xl">
             <div className="flex items-center justify-between gap-5">
               <Image
@@ -110,8 +100,6 @@ export default function AboutPage() {
                 className="object-cover w-8 h-auto rotate-8"
               />
             </div>
-
-            {/* <div className="w-20 h-1 bg-pink-500 mx-auto lg:mx-0 mb-6" /> */}
             <p className="text-pink-600 leading-relaxed mb-4">
               مهدان شاپ دنیایی از زیبایی و شادی
             </p>
@@ -123,15 +111,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/*  باکس اصلی */}
       <section dir="rtl" className="container mx-auto px-4 py-4">
-        {/* <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">چرا مهدان؟</h2>
-          <div className="w-20 h-1 bg-pink-500 mx-auto" />
-          <p className="text-gray-500 mt-4">سه دلیل برای انتخاب ما</p>
-        </div> */}
-
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {featureBoxes.map((box) => (
             <div
@@ -144,7 +124,7 @@ export default function AboutPage() {
                   alt={box.title}
                   width={400}
                   height={300}
-                  className={`object-contain w-auto h-full ${box.title=="ارسال سریع و مطمئن" && "-scale-x-100"} `}
+                  className={`object-contain w-auto h-full ${box.title == "ارسال سریع و مطمئن" && "-scale-x-100"} `}
                 />
               </div>
 
@@ -159,8 +139,6 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
-
-      {/* باکس هدف ما */}
       <section className="container mx-auto px-4 py-16">
         <div className="bg-linear-to-r from-pink-500 to-rose-500 rounded-3xl p-8 md:p-12 text-center text-white shadow-xl">
           <div className="max-w-3xl mx-auto">
@@ -179,7 +157,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
     </div>
   );
 }

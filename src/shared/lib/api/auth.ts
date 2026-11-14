@@ -8,18 +8,18 @@ export async function registerUser(data: {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(data),
   });
 
+  const result = await res.json();
+
   if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.error);
+    throw new Error(result.error || "ثبت‌نام ناموفق بود");
   }
 
-  return res.json();
+  return result;
 }
-
-
 
 export async function loginUser(data: {
   email: string;
@@ -30,13 +30,15 @@ export async function loginUser(data: {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(data),
   });
 
+  const result = await res.json();
+
   if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.error);
+    throw new Error(result.error || "ورود ناموفق بود");
   }
 
-  return res.json();
+  return result;
 }

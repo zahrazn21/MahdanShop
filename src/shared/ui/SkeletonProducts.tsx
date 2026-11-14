@@ -1,12 +1,8 @@
-// product-skeleton.tsx
 export function SkeletonProducts() {
   return (
     <div className="group relative bg-white rounded-3xl overflow-hidden shadow-sm animate-pulse h-54 md:h-auto md:mx-2 w-full">
-      {/* همان ساختار محصول اصلی اما با کلاس‌های bg-gray-200 به جای محتوای واقعی */}
       <div className="absolute top-2 right-2 z-10 w-12 h-6 bg-gray-200 rounded-full" />
-      {/* <div className="absolute top-2 left-2 z-10 w-8 h-8 bg-gray-200 rounded-full" />
-      <div className="absolute top-10 left-2 z-10 w-8 h-8 bg-gray-200 rounded-full" /> */}
-      
+     
       <div className="relative w-full flex items-center justify-center p-1 md:p-4">
         <div className="flex p-4 w-full border-2 border-dashed border-pink-100 rounded-3xl place-content-center">
           <div className="w-45 h-35 sm:w-26 bg-gray-200 rounded-lg" />

@@ -9,7 +9,7 @@ interface AdminToolbarProps {
 export default function AdminToolbar({ searchTerm, onSearchChange, onAddClick }: AdminToolbarProps) {
   return (
     <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
-      <div className="relative">
+      {/* <div className="relative">
         <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
@@ -18,7 +18,7 @@ export default function AdminToolbar({ searchTerm, onSearchChange, onAddClick }:
           onChange={(e) => onSearchChange(e.target.value)}
           className="pr-10 pl-4 py-2 border border-gray-200 rounded-full w-64 focus:outline-none focus:border-pink-400"
         />
-      </div>
+      </div> */}
       
       <button
         onClick={onAddClick}

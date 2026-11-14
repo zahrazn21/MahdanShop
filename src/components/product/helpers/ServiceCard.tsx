@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 interface ServiceCardProps {
-  id?: number;  // بهتره از id استفاده کنی نه key
+  id?: number; 
   icon: ReactNode;
   title: string;
   subtitle: string;

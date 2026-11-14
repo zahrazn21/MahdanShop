@@ -1,5 +1,3 @@
-// components/ui/SkeletonCard.tsx
-
 interface SkeletonCardProps {
   variant?: "default" | "horizontal" | "compact";
   count?: number;

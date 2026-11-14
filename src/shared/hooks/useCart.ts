@@ -1,106 +1,188 @@
+"use client";
 
-'use client';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { toast } from "sonner";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { cartApi } from "@/src/shared/lib/api/cartApi";
 
-// ================= GET CART =================
-export const useCart = () => {
+import type {
+  AddToCartInput,
+  CartResponse,
+  UpdateCartInput,
+} from "@/src/shared/types/cart";
+
+export const cartKeys = {
+  all: ["cart"] as const,
+};
+
+export function useCart() {
   return useQuery({
-    queryKey: ['cart'],
-    queryFn: async () => {
-      const res = await fetch('/api/cart');
-      if (!res.ok) throw new Error('خطا در دریافت سبد خرید');
-      return res.json();
+    queryKey: cartKeys.all,
+    queryFn: cartApi.get,
+    staleTime: 10_000,
+  });
+}
+
+function useInvalidateCart() {
+  const qc = useQueryClient();
+
+  return () => {
+    qc.invalidateQueries({
+      queryKey: cartKeys.all,
+    });
+  };
+}
+
+export function useAddToCart() {
+  const invalidate = useInvalidateCart();
+
+  return useMutation<unknown, Error, AddToCartInput>({
+    mutationFn: cartApi.add,
+
+    onSuccess: invalidate,
+
+    onError: (e) => {
+      toast.error(e.message);
     },
   });
-};
+}
 
+export function useUpdateCart() {
+  const qc = useQueryClient();
 
-// ================= ADD TO CART =================
-export const useAddToCart = () => {
-  const queryClient = useQueryClient();
+  return useMutation<
+    unknown,
+    Error,
+    UpdateCartInput,
+    { previous?: CartResponse }
+  >({
+    mutationFn: cartApi.update,
 
-  return useMutation({
-    mutationFn: async (data: { productId: string; quantity?: number }) => {
-      const res = await fetch('/api/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+    onMutate: async ({ id, quantity }) => {
+      await qc.cancelQueries({
+        queryKey: cartKeys.all,
       });
 
-      if (!res.ok) throw new Error('خطا در افزودن به سبد خرید');
-      return res.json();
+      const previous =
+        qc.getQueryData<CartResponse>(cartKeys.all);
+
+      if (previous) {
+        qc.setQueryData<CartResponse>(cartKeys.all, {
+          ...previous,
+
+          items: previous.items.map((i) =>
+            i.id === id
+              ? {
+                  ...i,
+                  quantity,
+                }
+              : i,
+          ),
+        });
+      }
+
+      return {
+        previous,
+      };
     },
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    onError: (e, _vars, ctx) => {
+      if (ctx?.previous) {
+        qc.setQueryData(
+          cartKeys.all,
+          ctx.previous,
+        );
+      }
+
+      toast.error(e.message);
     },
-  });
-};
 
-// ================= UPDATE QUANTITY =================
-export const useUpdateCart = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ id, quantity }: { id: string; quantity: number }) => {
-      const res = await fetch(`/api/cart?id=${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quantity }),
+    onSettled: () => {
+      qc.invalidateQueries({
+        queryKey: cartKeys.all,
       });
-
-      if (!res.ok) throw new Error('خطا در بروزرسانی تعداد');
-      return res.json();
-    },
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
   });
-};
+}
 
-// ================= REMOVE ITEM =================
-export const useRemoveFromCart = () => {
-  const queryClient = useQueryClient();
+export function useRemoveFromCart() {
+  const invalidate = useInvalidateCart();
 
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const res = await fetch(`/api/cart?id=${id}`, {
-        method: 'DELETE',
-      });
+  return useMutation<unknown, Error, string>({
+    mutationFn: cartApi.remove,
 
-      if (!res.ok) throw new Error('خطا در حذف از سبد خرید');
-      return res.json();
-    },
+    onSuccess: invalidate,
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    onError: (e) => {
+      toast.error(e.message);
     },
   });
-};
+}
 
-export const useCartActions = () => {
-  const { data, isLoading, error } = useCart();
+const EMPTY: CartResponse["items"] = [];
 
-  const addToCart = useAddToCart();
-  const updateCart = useUpdateCart();
-  const removeFromCart = useRemoveFromCart();
+export function useCartActions() {
+  const {
+    data,
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useCart();
+
+  const add = useAddToCart();
+  const update = useUpdateCart();
+  const remove = useRemoveFromCart();
 
   return {
-    cart: data?.items || [],
-    itemCount: data?.itemCount || 0,
-    totalPrice: data?.totalPrice || 0,
+    cart: data?.items ?? EMPTY,
+    itemCount: data?.itemCount ?? 0,
+
+    totalPrice: data?.totalPrice ?? 0,
+
+    totalDiscount: data?.totalDiscount ?? 0,
+
+    finalPrice: data?.finalPrice ?? 0,
+
+    shippingCost: data?.shippingCost ?? 0,
+
+    importedFreightCost:
+      data?.importedFreightCost ?? 0,
+
+    hasImportedItems:
+      data?.hasImportedItems ?? false,
+
+    hasDomesticItems:
+      data?.hasDomesticItems ?? false,
 
     isLoading,
+    isFetching,
     error,
+    refetch,
 
-    addToCart: addToCart.mutate,
-    updateCart: updateCart.mutate,
-    removeFromCart: removeFromCart.mutate,
+    addToCart: add.mutate,
+    addToCartAsync: add.mutateAsync,
 
-    isAdding: addToCart.isPending,
-    isUpdating: updateCart.isPending,
-    isRemoving: removeFromCart.isPending,
+    updateCart: update.mutate,
+    removeFromCart: remove.mutate,
+
+    isAdding: add.isPending,
+
+    isMutating:
+      add.isPending ||
+      update.isPending ||
+      remove.isPending,
+
+    updatingId: update.isPending
+      ? update.variables?.id
+      : undefined,
+
+    removingId: remove.isPending
+      ? remove.variables
+      : undefined,
   };
-};
+}

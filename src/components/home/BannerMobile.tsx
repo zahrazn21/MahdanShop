@@ -66,7 +66,6 @@ export default function BannerMobile() {
         shadow-[0px_-50px_196px_rgba(255,0,174,1)]
        </div> */}
       <div className="  relative w-full  overflow-hidden  group">
-        {/* اسلایدر کانتینر */}
         <div
           className=" relative flex transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -77,7 +76,6 @@ export default function BannerMobile() {
               className="relative w-full shrink-0"
               style={{ width: "100%" }}
             >
-              {/* افزایش ارتفاع با تغییر pt درصد */}
               <div className="relative w-full pt-[50%] md:pt-[45%] lg:pt-[50%] xl:pt-[55%]">
                 <Image
                   src={banner.image}
@@ -98,7 +96,6 @@ export default function BannerMobile() {
           ))}
         </div>
 
-        {/* دکمه قبلی */}
         <button
           onClick={prevSlide}
           className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 
@@ -123,8 +120,6 @@ export default function BannerMobile() {
             />
           </svg>
         </button>
-
-        {/* دکمه بعدی */}
         <button
           onClick={nextSlide}
           className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 
@@ -149,8 +144,6 @@ export default function BannerMobile() {
             />
           </svg>
         </button>
-
-        {/* دات‌های ناوبری */}
         <div
           className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 
                       flex gap-1 md:gap-2 z-10"

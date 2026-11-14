@@ -1,4 +1,3 @@
-// app/error.tsx
 'use client';
 
 import { useEffect } from 'react';
@@ -13,28 +12,22 @@ export default function RootError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // لاگ خطا در کنسول
     console.error('Application error:', error);
   }, [error]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden text-center">
-        {/* بخش بالایی با آیکون */}
-        <div className="bg-gradient-to-r from-red-500 to-pink-500 p-6">
+        <div className="bg-linear-to-r from-red-500 to-pink-500 p-6">
           <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto backdrop-blur-sm">
             <AlertCircle className="w-10 h-10 text-white" />
           </div>
         </div>
-        
-        {/* محتوای خطا */}
         <div className="p-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">اوه! خطایی رخ داد</h2>
           <p className="text-gray-500 mb-6">
             متأسفانه در پردازش درخواست شما مشکلی پیش آمد. لطفاً دوباره تلاش کنید.
           </p>
-          
-          {/* نمایش خطا در محیط توسعه */}
           {process.env.NODE_ENV === 'development' && (
             <div className="bg-gray-100 rounded-lg p-4 mb-6 text-left">
               <p className="text-red-600 font-mono text-sm break-all">
@@ -42,8 +35,6 @@ export default function RootError({
               </p>
             </div>
           )}
-          
-          {/* دکمه‌های اقدام */}
           <div className="flex gap-3 justify-center">
             <button
               onClick={reset}

@@ -19,8 +19,6 @@ interface Review {
   isLiked?: boolean;
   isPurchased?: boolean;
 }
-
-// نظرات فیک
 const fakeReviews: Review[] = [
   {
     id: "1",
@@ -87,7 +85,6 @@ const fakeReviews: Review[] = [
   },
 ];
 
-// کامپوننت نمایش ستاره‌ها
 function StarRating({ rating }: { rating: number }) {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.5;
@@ -106,7 +103,6 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-// کامپوننت هر نظر
 function ReviewCard({ review }: { review: Review }) {
   const [liked, setLiked] = useState(review.isLiked || false);
   const [likesCount, setLikesCount] = useState(review.likes);
@@ -124,8 +120,7 @@ function ReviewCard({ review }: { review: Review }) {
     <div className="border-b border-gray-100 pb-6 last:border-0">
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">
-          {/* آواتار */}
-          <div className="w-10 h-10 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full flex items-center justify-center text-white font-bold">
+          <div className="w-10 h-10 bg-linear-to-r from-pink-400 to-rose-400 rounded-full flex items-center justify-center text-white font-bold">
             {review.user.name.charAt(0)}
           </div>
           
@@ -182,12 +177,10 @@ function ReviewCard({ review }: { review: Review }) {
   );
 }
 
-// کامپوننت اصلی بخش نظرات
 export default function ReviewsSection({ productReviewCount = 34, productRating = 4.5 }: { productReviewCount?: number; productRating?: number }) {
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "highest" | "lowest">("newest");
   const [showWriteReview, setShowWriteReview] = useState(false);
 
-  // مرتب‌سازی نظرات
   const sortedReviews = [...fakeReviews].sort((a, b) => {
     switch (sortBy) {
       case "newest":
@@ -203,7 +196,6 @@ export default function ReviewsSection({ productReviewCount = 34, productRating 
     }
   });
 
-  // آمار رتبه‌بندی
   const ratingStats = {
     5: fakeReviews.filter(r => r.rating === 5).length,
     4: fakeReviews.filter(r => r.rating === 4).length,
@@ -216,10 +208,8 @@ export default function ReviewsSection({ productReviewCount = 34, productRating 
 
   return (
     <div className="space-y-8">
-      {/* خلاصه امتیازات */}
-      <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl p-6">
+      <div className="bg-linear-to-r from-pink-50 to-rose-50 rounded-2xl p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* سمت راست - امتیاز کلی */}
           <div className="text-center md:text-right">
             <div className="text-5xl font-bold text-pink-600">{productRating}</div>
             <div className="flex justify-center md:justify-start mt-2">
@@ -237,7 +227,6 @@ export default function ReviewsSection({ productReviewCount = 34, productRating 
             </button>
           </div>
           
-          {/* سمت چپ - جزئیات امتیازات */}
           <div className="space-y-2">
             {[5, 4, 3, 2, 1].map(star => {
               const count = ratingStats[star as keyof typeof ratingStats];
@@ -260,7 +249,6 @@ export default function ReviewsSection({ productReviewCount = 34, productRating 
         </div>
       </div>
 
-      {/* هدر نظرات */}
       <div className="flex justify-between items-center flex-wrap gap-4">
         <h3 className="font-bold text-lg text-gray-800">
           نظرات کاربران ({totalReviews})
@@ -282,14 +270,12 @@ export default function ReviewsSection({ productReviewCount = 34, productRating 
         </div>
       </div>
 
-      {/* لیست نظرات */}
       <div className="space-y-6">
         {sortedReviews.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
       </div>
 
-      {/* فرم نوشتن نظر (مودال یا ساده) */}
       {showWriteReview && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowWriteReview(false)}>
           <div className="bg-white rounded-2xl max-w-lg w-full p-6" onClick={(e) => e.stopPropagation()}>

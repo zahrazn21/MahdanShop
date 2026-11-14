@@ -1,4 +1,3 @@
-// app/contact/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -15,7 +14,6 @@ import {
   Heart,
 } from "lucide-react";
 
-// components/contact/ContactFormFields.ts
 export interface ContactField {
   name: string;
   label: string;
@@ -66,7 +64,6 @@ export const contactFormFields: ContactField[] = [
   },
 ];
 
-// دیتای راه‌های ارتباطی
 const contactInfo = [
   {
     id: 1,
@@ -151,8 +148,6 @@ export default function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // منطق ارسال فرم به سرور
-    console.log("Form data:", formData);
     setIsSubmitted(true);
     setTimeout(() => setIsSubmitted(false), 3000);
     setFormData({ name: "", email: "", subject: "", message: "" });
@@ -215,7 +210,6 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen  pt-12">
       <div className="container mx-auto px-4">
-        {/* هدر صفحه */}
         <div className="text-center mb-12 justify-items-center grid gap-6">
           <div className=" flex items-center justify-between gap-5">
             <Image
@@ -236,14 +230,12 @@ export default function ContactPage() {
               className="object-cover w-8 h-auto rotate-8"
             />
           </div>
-          {/* <div className="w-20 h-1 bg-pink-500 mx-auto mb-4" /> */}
           <p className="text-pink-600 max-w-2xl mx-auto">
             خوشحال می‌شیم نظرات، پیشنهادات و سوالات شما رو بشنویم
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* بخش سمت راست: فرم تماس */}
           <div
             dir="rtl"
             className="bg-[#ffc6e2] rounded-4xl border border-white shadow-md p-6 md:p-8 order-1 lg:order-2"
@@ -265,13 +257,11 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-3 rounded-xl font-semibold hover:from-pink-600 hover:to-rose-600 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                className="w-full bg-linear-to-r from-pink-500 to-rose-500 text-white py-3 rounded-xl font-semibold hover:from-pink-600 hover:to-rose-600 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
               >
                 <Send className="w-5 h-5" />
                 ارسال پیام
               </button>
-
-              {/* پیام موفقیت */}
               {isSubmitted && (
                 <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-xl text-green-600">
                   <CheckCircle className="w-5 h-5" />
@@ -281,9 +271,7 @@ export default function ContactPage() {
             </form>
           </div>
 
-          {/* بخش سمت چپ: راه‌های ارتباطی */}
           <div className="space-y-6 order-2 lg:order-1">
-            {/* کارت اطلاعات تماس */}
             <div
               dir="rtl"
               className="relative bg-[#fdf5f9] rounded-4xl border border-white shadow-md p-6 md:p-8"
@@ -292,7 +280,6 @@ export default function ContactPage() {
                 راه‌های ارتباطی
               </h2>
               <div className="absolute -top-12 md:-top-10 left-[40%] md:left-[43%] w-15 h-15 md:w-20 md:h-20 bg-pink-100 border-2 border-[#ffeaf2] shadow-md shadow-pink-200 rounded-full flex items-center justify-center flex-shrink-0">
-                {/* <Heart className="w-10 h-10 text-pink-500 fill-pink-50" /> */}
                 <Image
                   src="/images/love2.png"
                   alt="فروشگاه مهدان"
@@ -340,52 +327,6 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* کارت شبکه‌های اجتماعی */}
-            {/* <div dir='rtl' className="bg-[#fdf5f9] rounded-3xl shadow-xl p-6 md:p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">ما را دنبال کنید</h2>
-              
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl text-white hover:scale-105 transition-transform duration-300"
-                >
-                  <Instagram className="w-8 h-8" />
-                  <span className="text-sm font-medium">اینستاگرام</span>
-                </a>
-                
-                <a
-                  href="https://t.me"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl text-white hover:scale-105 transition-transform duration-300"
-                >
-                  <SendIcon className="w-8 h-8" />
-                  <span className="text-sm font-medium">تلگرام</span>
-                </a>
-                
-                <a
-                  href="https://wa.me"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl text-white hover:scale-105 transition-transform duration-300"
-                >
-                  <PhoneCall className="w-8 h-8" />
-                  <span className="text-sm font-medium">واتساپ</span>
-                </a>
-                
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-gray-700 to-gray-800 rounded-2xl text-white hover:scale-105 transition-transform duration-300"
-                >
-                  <Twitter className="w-8 h-8" />
-                  <span className="text-sm font-medium">توییتر</span>
-                </a>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>

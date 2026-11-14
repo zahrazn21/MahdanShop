@@ -8,22 +8,17 @@ export default function NotFound() {
   return (
     <div className="min-h-screen  flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden text-center">
-        {/* عدد 404 با افکت */}
-        <div className="relative bg-gradient-to-r from-pink-500 to-rose-500 p-8">
+        <div className="relative bg-linear-to-r from-pink-500 to-rose-500 p-8">
           <div className="text-8xl font-bold text-white opacity-20">404</div>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-7xl font-bold text-white">:(</div>
           </div>
         </div>
-        
-        {/* محتوا */}
         <div className="p-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">صفحه پیدا نشد!</h2>
           <p className="text-gray-500 mb-6">
             متأسفیم، صفحه‌ای که به دنبال آن هستید وجود ندارد یا حذف شده است.
           </p>
-          
-          {/* پیشنهادات */}
           <div className="space-y-3 mb-8">
             <p className="text-sm text-gray-400">شاید این صفحات به کارتان بیایند:</p>
             <div className="flex flex-wrap gap-2 justify-center">
@@ -34,8 +29,6 @@ export default function NotFound() {
               <Link href="/categories" className="text-pink-500 text-sm hover:underline">دسته‌بندی‌ها</Link>
             </div>
           </div>
-          
-          {/* دکمه‌ها */}
           <div className="flex gap-3 justify-center">
             <Link
               href="/"

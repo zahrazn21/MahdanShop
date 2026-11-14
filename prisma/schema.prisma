@@ -11,66 +11,511 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String
+  role      Role     @default(USER)
+  points    Int      @default(0)
   createdAt DateTime @default(now())
+  carts     Cart[]
+  orders    Order[]
+  domesticParcelBatches DomesticParcelBatch[]
+
+  reviews               Review[]
+  favorites             Favorite[]
   
-  carts     Cart[]   // رابطه با سبد خرید
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ShippingClass {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum ProductStatus {
+  ACTIVE
+  DRAFT
+  OUT_OF_STOCK
+  ARCHIVED
+}
+
+enum AvailabilityType {
+  IN_STOCK
+  PRE_ORDER
+}
+
+enum BatchStatus {
+  OPEN
+  PROCESSING
+  ARRIVED
+  CLOSED
+}
+
+
+model OrderBatch {
+  id                    String        @id @default(cuid())
+  batchNumber           Int           @unique
+  title                 String
+
+  estimatedFreightPerKg Float?
+
+  status                BatchStatus   @default(OPEN)
+
+  openedAt              DateTime      @default(now())
+  closedAt              DateTime?
+
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  products              Product[]
+  shipments             OrderShipment[]
+
+  @@map("order_batches")
 }
 
 model Product {
-  id            String      @id @default(cuid())
-  name          String
-  slug          String      @unique
-  price         Int
-  originalPrice Int?
-  image         String
-  images        String[]     // آرایه آدرس تصاویر (می‌تواند خالی باشد)
-  category      String
-  brand         String?
-  scope         String       // "imported" یا "domestic"
-  stock         Int          @default(0)
-  colors        String[]     // آرایه رنگ‌ها (می‌تواند خالی باشد)
-  sizes         String[]     // آرایه سایزها (می‌تواند خالی باشد)
-  numbers       String[]     // آرایه اعداد (می‌تواند خالی باشد)
-  isAvailable   Boolean      @default(true)
-  rating        Float?       @default(0)
-  reviewCount   Int          @default(0)
-  description   String?      @db.Text
-  features      String[]     // ویژگی‌های محصول (می‌تواند خالی باشد)
-  howToUse      String?      @db.Text
-  ingredients   String[]     // مواد تشکیل‌دهنده (می‌تواند خالی باشد)
-  createdAt     DateTime     @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt
-  cartItems     CartItem[]   // 👈 اضافه شد: رابطه با آیتم‌های سبد خرید
+  id                    String           @id @default(cuid())
+  name                  String
+  slug                  String           @unique
+  price                 Int
+  originalPrice         Int?
+  image                 String
+  images                String[]
+  category              String
+  brand                 String?
+  scope                 String
+
+  availabilityType      AvailabilityType @default(IN_STOCK)
+  estimatedDeliveryDays Int?
+  preOrderNote          String?          @db.Text
+  
+  batchId               String?
+  batch                 OrderBatch?      @relation(fields: [batchId], references: [id])
+
+  stock                 Int              @default(0)
+  shippingClass         ShippingClass    @default(SMALL)
+  colors                String[]
+  sizes                 String[]
+  numbers               String[]
+  isAvailable           Boolean          @default(true)
+
+  rating                Float            @default(0)
+  reviewCount           Int              @default(0)
+
+  description           String?          @db.Text
+  features              String[]
+  howToUse              String?          @db.Text
+  ingredients           String[]
+
+  createdAt             DateTime         @default(now()) @map("created_at")
+  updatedAt             DateTime         @default(now()) @updatedAt
+
+  cartItems             CartItem[]
+  reviews               Review[]
+
+  sku                   String?
+  weight                Int?            
+  status                ProductStatus    @default(ACTIVE)
+  expirationDate        DateTime?
+  specifications        Json?
+  variants              Json?
+
+  favorites             Favorite[]
 
   @@index([category])
   @@index([brand])
   @@index([scope])
   @@index([isAvailable])
   @@index([slug])
+  @@index([availabilityType])
+  @@index([batchId])
   @@map("products")
+  @@index([createdAt])
+  @@index([price])
 }
 
 model Cart {
   id        String     @id @default(cuid())
-  userId    String?    // null = مهمان
+  userId    String?    @unique
   items     CartItem[]
   createdAt DateTime   @default(now())
-  updatedAt DateTime @default(now()) @updatedAt  
-  user      User?      @relation(fields: [userId], references: [id]) // 👈 اضافه شد
+  updatedAt DateTime   @default(now()) @updatedAt
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CartItem {
-  id        String   @id @default(cuid())
-  cartId    String
-  productId String
-  quantity  Int      @default(1)
+  id             String  @id @default(cuid())
+  cartId         String
+  productId      String
+  quantity       Int     @default(1)
 
+  variantId      String?
   selectedColor  String?
   selectedSize   String?
   selectedNumber String?
 
-  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id]) // 👈 اضافه شد: رابطه با Product
+  cart           Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product        Product @relation(fields: [productId], references: [id])
 
-  @@unique([cartId, productId, selectedColor, selectedSize, selectedNumber]) // 👈 جلوگیری از آیتم تکراری
+  @@unique([cartId, productId, variantId, selectedColor, selectedSize, selectedNumber])
 }
+enum ParcelBatchStatus {
+  OPEN
+  AWAITING_PAYMENT
+  PAID
+  SHIPPED
+  CANCELLED
+}
+
+model DomesticParcelBatch {
+  id             String            @id @default(cuid())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id])
+
+  status         ParcelBatchStatus @default(OPEN)
+
+  totalVolume    Int               @default(0)
+  shippingCost   Int               @default(0)
+
+  shippingDueAt  DateTime?
+  paidAt         DateTime?
+  shippedAt      DateTime?
+  trackingNumber String?
+
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  shipments      OrderShipment[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("domestic_parcel_batches")
+}
+
+enum ShipmentType {
+  DOMESTIC
+  IMPORTED
+}
+
+enum ShipmentStatus {
+  PENDING
+  WAITING_IMPORT          
+  WAITING_FOR_FREIGHT    
+  READY_TO_SHIP      
+  SHIPPED             
+  DELIVERED
+}
+
+enum FreightPaymentStatus {
+  NOT_REQUIRED           
+  PENDING               
+  AWAITING_USER_PAYMENT 
+  PAID               
+}
+enum ShippingPaymentStatus {
+  NOT_REQUIRED
+  AWAITING_USER_PAYMENT
+  PAID
+  EXPIRED
+}
+model OrderShipment {
+  id                    String               @id @default(cuid())
+  orderId               String
+  order                 Order                @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  batchId               String?
+  batch                 OrderBatch?          @relation(fields: [batchId], references: [id])
+
+  status                ShipmentStatus       @default(PENDING)
+  shipmentType          ShipmentType         @default(DOMESTIC)
+  trackingNumber        String?
+
+  shippedAt             DateTime?
+  deliveredAt           DateTime?
+  estimatedDeliveryDays Int?
+
+
+  subtotal              Int                  @default(0)
+  items                 OrderShipmentItem[]
+
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+
+  shippingCost          Int?
+  shippingPaymentStatus ShippingPaymentStatus @default(NOT_REQUIRED)
+  shippingDueAt        DateTime?
+  shippingPaidAt       DateTime?
+  shippingPayments ShippingPayment[]
+
+  actualWeightGram      Int?
+  freightRateYuan       Float?
+  yuanExchangeRate      Int?
+  freightCostToman      Int?
+  freightPaymentStatus  FreightPaymentStatus @default(NOT_REQUIRED)
+  freightReceiptImage   String?
+
+  parcelBatchId String?
+  parcelBatch   DomesticParcelBatch? @relation(fields: [parcelBatchId], references: [id])
+
+  @@index([orderId])
+  @@index([batchId])
+  @@map("order_shipments")
+  @@index([parcelBatchId])
+
+}
+
+model OrderShipmentItem {
+  id          String        @id @default(cuid())
+  shipmentId  String
+  shipment    OrderShipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  orderItemId String
+  orderItem   OrderItem     @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  quantity    Int
+
+  @@unique([shipmentId, orderItemId])
+  @@map("order_shipment_items")
+}
+enum ShippingPaymentReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+enum ShippingPaymentMode {
+  IMMEDIATE
+  DEFERRED
+}
+model ShippingPayment {
+  id                String   @id @default(cuid())
+
+  shipmentId        String
+  shipment          OrderShipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  amount            Int
+  status            ShippingPaymentReviewStatus @default(PENDING)
+
+  receiptImage      String?
+  payerName         String?
+  payerCardLast4    String?
+
+  adminNote         String?
+  rejectionReason   String?
+
+  reviewedAt        DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  receiptGroupId String?
+
+  userDeletedAt     DateTime?
+  adminDeletedAt    DateTime?
+
+ 
+  @@index([shipmentId])
+  @@index([status])
+  @@index([userDeletedAt])
+  @@index([adminDeletedAt])
+  @@map("shipping_payments")
+}
+model Order {
+  id            String        @id @default(cuid())
+  userId        String?
+
+  subtotal      Int           @default(0)
+  shippingCost  Int           @default(0)
+  discount      Int           @default(0)
+  tax           Int           @default(0)
+  totalPrice    Int
+
+  paymentMethod PaymentMethod @default(CARD_TO_CARD)
+  paymentStatus PaymentStatus @default(PENDING)
+  status        OrderStatus   @default(PENDING_PAYMENT)
+
+  shippingInfo  Json?
+
+  items         OrderItem[]
+  payment       Payment?
+  shipments     OrderShipment[]
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user          User?         @relation(fields: [userId], references: [id])
+
+  importedFreightAccepted    Boolean  @default(false)
+  importedFreightAcceptedAt  DateTime?
+  importedFreightTermsVersion String?
+
+  shippingPaymentMode ShippingPaymentMode @default(IMMEDIATE)
+
+  @@index([userId])
+  @@index([paymentStatus])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model Payment {
+  id              String              @id @default(cuid())
+  orderId         String              @unique
+  order           Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  method          PaymentMethod       @default(CARD_TO_CARD)
+  status          PaymentReviewStatus @default(PENDING)
+
+  amount          Int
+  receiptImage    String?
+  payerName       String?
+  payerCardLast4  String?
+
+  adminNote       String?
+  rejectionReason String?
+
+  reviewedAt      DateTime?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  CARD_TO_CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  REVIEW
+  PAID
+  REJECTED
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  WAITING_CONFIRMATION
+  CONFIRMED
+  PROCESSING
+  PARTIALLY_SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model OrderItem {
+  id                    String              @id @default(cuid())
+  orderId               String
+  order                 Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  shipments             OrderShipmentItem[]
+  productId             String
+  name                  String
+  price                 Int
+  quantity              Int
+  selectedColor         String?
+  selectedSize          String?
+  selectedNumber        String?
+  shippingClass         ShippingClass
+  volume                Float?
+  volumeUnit            String?
+  shadeName             String?
+  shadeNumber           String?
+  image                 String?
+  variantId             String?
+  variantName           String?
+  variantSize           String?
+  variantVolume         Float?
+  variantVolumeUnit     String?
+  availabilityType      AvailabilityType    @default(IN_STOCK)
+  estimatedDeliveryDays Int?
+
+  batchNumber           Int?
+
+  @@index([productId])
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model ShippingPrice {
+  id          String        @id @default(cuid())
+  class       ShippingClass @unique
+  price       Int
+  unitWeight  Int           @default(1)
+  maxCapacity Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("shipping_prices")
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Review {
+  id        String       @id @default(cuid())
+  userId    String
+  productId String
+
+  rating    Int
+  comment   String       @db.Text
+  imageUrls String[]     @default([])
+
+  status    ReviewStatus @default(PENDING)
+  adminNote String?      @db.Text
+
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("reviews")
+  @@index([productId, status, createdAt])
+}
+
+
+
+model Favorite {
+  id        String   @id @default(cuid())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+  @@map("favorites")
+}
+
+model NotificationRead {
+  id             String   @id @default(cuid())
+  userId         String
+  notificationId String
+  readAt         DateTime @default(now())
+
+  @@unique([userId, notificationId])
+  @@index([userId])
+  @@index([notificationId])
+  @@map("notification_reads")
+}
+

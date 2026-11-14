@@ -5,8 +5,8 @@ import Link from "next/link";
 export default function CategoryCard({ category }: { category: Category }) {
   return (
     <div className="group transition-all duration-300  hover:-translate-y-2 hover:scale-105 hover:shadow-[0_0px_10px_rgba(252,94,143,0.5)] cursor-pointer relative text-center gap-2 grid w-20 h-20 sm:w-32 sm:h-32 md:w-35 md:h-35 bg-white rounded-full p-1 sm:p-3 md:p-1.5 ">
-      <Link href={`/products/${category.scope}/${category.slug}`}>
-        <div className="relative  w-full h-full bg-(--color-pink-light) rounded-full overflow-hidden border-2 border-dashed border-(--color-pink-white)   items-center content-center place-content-center ">
+      <Link href={`/products/${category.slug}`}>
+        <div className="relative   w-full h-full bg-(--color-pink-light) rounded-full overflow-hidden border-2 border-dashed border-(--color-pink-white)   items-center content-center place-content-center ">
           <Image
             className=" absolute inset-0 transition-opacity duration-300 group-hover:opacity-0 w-full h-full object-cover"
             src={category.image}

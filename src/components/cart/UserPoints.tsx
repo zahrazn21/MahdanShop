@@ -1,7 +1,6 @@
-// components/cart/UserPoints.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Star, Gift, TrendingUp, Award } from "lucide-react";
 
 interface UserPointsProps {
@@ -10,23 +9,15 @@ interface UserPointsProps {
   discountPercent?: number;
   onRedeemPoints?: (points: number) => void;
 }
-
 export default function UserPoints({
   currentPoints = 220,
   nextLevelPoints = 500,
-  discountPercent = 5,
   onRedeemPoints,
 }: UserPointsProps) {
   const [selectedPoints, setSelectedPoints] = useState(0);
   const [showRedeem, setShowRedeem] = useState(false);
-
   const progress = (currentPoints / nextLevelPoints) * 100;
   const remainingPoints = nextLevelPoints - currentPoints;
-
-  // محاسبه تخفیف قابل دریافت
-  const availableDiscount = Math.floor(currentPoints / 100) * discountPercent;
-  const maxDiscount = Math.min(availableDiscount, 30); // حداکثر 30% تخفیف
-
   const handleRedeem = () => {
     if (onRedeemPoints && selectedPoints > 0) {
       onRedeemPoints(selectedPoints);
@@ -44,7 +35,6 @@ export default function UserPoints({
         backgroundPosition: "center",
       }}
     >
-      {/* هدر */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Award className="w-6 h-6" />
@@ -57,16 +47,11 @@ export default function UserPoints({
           {showRedeem ? "بستن" : "تبدیل امتیاز"}
         </button>
       </div>
-
-      {/* امتیاز فعلی */}
       <div className="text-center mb-4">
         <div className="text-4xl font-bold text-pink-500">
           {currentPoints.toLocaleString()}
         </div>
-        {/* <p className="text-white/80 text-sm">امتیاز شما</p> */}
       </div>
-
-      {/* نوار پیشرفت */}
       <div className="mb-3">
         <div className="flex justify-between text-sm mb-1">
           <span>{currentPoints.toLocaleString()} امتیاز</span>
@@ -84,8 +69,6 @@ export default function UserPoints({
             : "تبریک! به سطح بعدی رسیدید"}
         </p>
       </div>
-
-      {/* مزایا */}
       <div className="grid grid-cols-3 gap-2 mb-4">
         <div className="bg-white/10 rounded-xl p-2 text-center">
           <Star className="w-4 h-4 mx-auto mb-1" />
@@ -107,13 +90,9 @@ export default function UserPoints({
           <p className="text-[10px] ">سطح {Math.floor(progress / 25) + 1}</p>
         </div>
       </div>
-
-      {/* پنل تبدیل امتیاز */}
       {showRedeem && (
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mt-2 animate-in slide-in-from-top-2 duration-300">
           <p className="text-sm font-medium mb-3">تبدیل امتیاز به تخفیف</p>
-
-          {/* اسلایدر انتخاب امتیاز */}
           <div className="mb-3">
             <input
               type="range"
@@ -129,8 +108,6 @@ export default function UserPoints({
               <span>{Math.min(currentPoints, 1000)} امتیاز</span>
             </div>
           </div>
-
-          {/* نمایش تخفیف */}
           <div className="bg-white/10 rounded-lg p-3 mb-3 text-center">
             <p className="text-sm">تخفیف قابل دریافت</p>
             <p className="text-2xl font-bold text-pink-400">
@@ -142,7 +119,6 @@ export default function UserPoints({
               تومان
             </p>
           </div>
-
           <div className="flex gap-2">
             <button
               onClick={handleRedeem}

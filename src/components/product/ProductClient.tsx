@@ -1,12 +1,9 @@
-// ProductClient.tsx - نسخه کامل با گالری هوشمند
-
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { CheckCircle } from "lucide-react";
 import TabsSection from "./helpers/tabSection";
-import { Product } from "./ProductItems";
 import { ProductInfoSection } from "./helpers/ProductInfoSection";
 import { ProductSkeleton } from "./helpers/ProductSkeleton";
 import { Breadcrumb } from "./helpers/Breadcrumb";
@@ -14,6 +11,8 @@ import ProductGallery from "./helpers/ProductGallery";
 import { ServiceCard } from "./helpers/ServiceCard";
 import { Gift, Truck, ShieldCheck, RefreshCw } from "lucide-react";
 import { useCartActions } from "@/src/shared/hooks/useCart";
+import { Product, ProductVariant } from "@/src/shared/types/product";
+
 interface Props {
   id: string;
   initialProduct: Product;
@@ -23,6 +22,7 @@ export default function ProductClient({ id, initialProduct }: Props) {
   const [quantity, setQuantity] = useState(1);
   const [isWishlist, setIsWishlist] = useState(false);
   const [showAddedToCart, setShowAddedToCart] = useState(false);
+
   const [activeTab, setActiveTab] = useState<
     "description" | "reviews" | "details"
   >("description");
@@ -30,30 +30,59 @@ export default function ProductClient({ id, initialProduct }: Props) {
   const [selectedColor, setSelectedColor] = useState(
     initialProduct.colors?.[0] || "",
   );
+
   const [selectedSize, setSelectedSize] = useState(
     initialProduct.sizes?.[0] || "",
   );
+
   const [selectedNumber, setSelectedNumber] = useState(
     initialProduct.numbers?.[0] || "",
   );
 
-  const { data: product, isLoading } = useQuery({
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    initialProduct.variants?.[0] ?? null,
+  );
+
+  const { data: product, isLoading } = useQuery<Product>({
     queryKey: ["product", id],
-    queryFn: async () => {
+
+    queryFn: async (): Promise<Product> => {
       const res = await fetch(`/api/products/${id}`);
+
+      if (!res.ok) {
+        throw new Error("خطا در دریافت محصول");
+      }
+
       return res.json();
     },
+
     initialData: initialProduct,
     staleTime: 5 * 60 * 1000,
   });
 
-  const { addToCart, isAdding } = useCartActions();
+  const { addToCartAsync, isAdding } = useCartActions();
+
+  const isPreOrder = product.availabilityType === "PRE_ORDER";
+  const isInStock = product.availabilityType === "IN_STOCK";
+  const currentStock = selectedVariant?.stock ?? product.stock;
+  const isPreOrderOpen = isPreOrder && product.batch?.status === "OPEN";
+  const canPurchase =
+    product.status === "ACTIVE" &&
+    product.isAvailable &&
+    ((isInStock && currentStock > 0) || (isPreOrder && isPreOrderOpen));
+  const safeQuantity =
+    isInStock && currentStock > 0 ? Math.min(quantity, currentStock) : quantity;
+
   const incrementQuantity = () => {
-    if (quantity < product.stock) setQuantity((prev) => prev + 1);
+    if (!isPreOrder && safeQuantity >= currentStock) {
+      return;
+    }
+
+    setQuantity((prev) => prev + 1);
   };
 
   const decrementQuantity = () => {
-    if (quantity > 1) setQuantity((prev) => prev - 1);
+    setQuantity((prev) => Math.max(1, prev - 1));
   };
 
   const discount = product.originalPrice
@@ -62,27 +91,71 @@ export default function ProductClient({ id, initialProduct }: Props) {
       )
     : 0;
 
+  const handleAddToCart = async (variantId?: string) => {
+    if (isAdding) {
+      return;
+    }
 
-const handleAddToCart = () => {
-  if (!product || isAdding) return;
+    if (!canPurchase) {
+      alert(
+        isPreOrder
+          ? "مهلت پیش‌سفارش این محصول فعال نیست."
+          : "این محصول در حال حاضر قابل سفارش نیست.",
+      );
 
-  if (quantity > product.stock) return;
+      return;
+    }
 
-  addToCart({
-    productId: product.id,
-    quantity,
-    selectedColor,
-    selectedSize,
-    selectedNumber,
-  });
+    const resolvedVariantId = variantId ?? selectedVariant?.id;
 
-  setShowAddedToCart(true);
-  setTimeout(() => setShowAddedToCart(false), 3000);
-};
-  console.log("p", product);
-  console.log("id", product.id);
+    if (isInStock) {
+      const selectedProductVariant = resolvedVariantId
+        ? product.variants?.find((variant) => variant.id === resolvedVariantId)
+        : undefined;
 
-  // servicesData.ts یا داخل خود کامپوننت
+      const stock = selectedProductVariant?.stock ?? product.stock;
+
+      if (stock <= 0) {
+        alert("این محصول موجود نیست");
+        return;
+      }
+
+      if (safeQuantity > stock) {
+        alert(`حداکثر تعداد قابل خرید ${stock} عدد است`);
+        return;
+      }
+    }
+
+    try {
+      await addToCartAsync({
+        productId: product.id,
+        quantity: safeQuantity,
+
+        ...(resolvedVariantId ? { variantId: resolvedVariantId } : {}),
+
+        ...(selectedColor ? { selectedColor } : {}),
+
+        ...(selectedSize ? { selectedSize } : {}),
+
+        ...(selectedNumber ? { selectedNumber } : {}),
+      });
+
+      setShowAddedToCart(true);
+
+      window.setTimeout(() => {
+        setShowAddedToCart(false);
+      }, 3000);
+    } catch (error) {
+      console.error("ADD TO CART ERROR:", error);
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "خطا در افزودن محصول به سبد خرید",
+      );
+    }
+  };
+
   const services = [
     {
       id: 1,
@@ -110,30 +183,35 @@ const handleAddToCart = () => {
     },
   ];
 
-  if (isLoading) return <ProductSkeleton />;
+  if (isLoading) {
+    return <ProductSkeleton />;
+  }
 
   return (
     <div dir="rtl" className="min-h-screen">
       <div
-        className={`fixed bottom-4 left-4 z-50 transition-all duration-300 transform ${
+        className={`fixed bottom-4 left-4 z-50 transform transition-all duration-300 ${
           showAddedToCart
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-10 pointer-events-none"
+            ? "translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-10 opacity-0"
         }`}
       >
-        <div className="bg-linear-to-r from-green-500 to-emerald-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-2">
-          <CheckCircle className="w-5 h-5" />
+        <div className="flex items-center gap-2 rounded-xl bg-linear-to-r from-green-500 to-emerald-500 px-6 py-3 text-white shadow-lg">
+          <CheckCircle className="h-5 w-5" />
+
           <span>به سبد خرید اضافه شد!</span>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container md:mx-auto md:max-w-7xl md:px-4 px-2  py-2">
         <Breadcrumb product={product} />
 
-<div className="grid grid-cols-1 lg:grid-cols-[1fr_500px] gap-5 items-start">
-            <div className="sticky top-6 self-start">
+        <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[1fr_500px]">
+          <div className="min-w-0 lg:sticky lg:top-6 self-start">
+            {" "}
             <ProductGallery
               product={product}
+              selectedVariant={selectedVariant}
               discount={discount}
               isWishlist={isWishlist}
               setIsWishlist={setIsWishlist}
@@ -142,12 +220,11 @@ const handleAddToCart = () => {
 
           <ProductInfoSection
             product={product}
-            quantity={quantity}
+            quantity={safeQuantity}
             discount={discount}
             incrementQuantity={incrementQuantity}
             decrementQuantity={decrementQuantity}
             handleAddToCart={handleAddToCart}
-            // ✅ props جدید
             selectedColor={selectedColor}
             selectedSize={selectedSize}
             selectedNumber={selectedNumber}
@@ -155,9 +232,18 @@ const handleAddToCart = () => {
             onSizeChange={setSelectedSize}
             onNumberChange={setSelectedNumber}
             isAdding={isAdding}
+            selectedVariant={selectedVariant}
+            onVariantChange={(variant) => {
+              setSelectedVariant(variant);
+              setSelectedColor(variant.name ?? "");
+              setSelectedSize(variant.size ?? "");
+              setSelectedNumber(variant.stock?.toString() ?? "");
+              setQuantity(1);
+            }}
           />
         </div>
-        <div className="grid grid-cols-4 gap-0  rounded-2xl  py-4 my-5 bg-(--color-pink-light) shadow-xl shadow-pink-800/10 ">
+
+        <div className="my-5 grid grid-cols-4 gap-0 rounded-2xl bg-(--color-pink-light) py-4 shadow-xl shadow-pink-800/10">
           {services.map((service) => (
             <ServiceCard
               key={service.id}
@@ -168,6 +254,7 @@ const handleAddToCart = () => {
             />
           ))}
         </div>
+
         <TabsSection
           product={product}
           activeTab={activeTab}
